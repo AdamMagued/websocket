@@ -17,6 +17,19 @@ var hostPortNoPortTests = []struct {
 	{&url.URL{Scheme: "wss", Host: "example.com"}, "example.com:443", "example.com"},
 	{&url.URL{Scheme: "ws", Host: "example.com:7777"}, "example.com:7777", "example.com"},
 	{&url.URL{Scheme: "wss", Host: "example.com:7777"}, "example.com:7777", "example.com"},
+	{&url.URL{Scheme: "ws", Host: "[::1]"}, "[::1]:80", "::1"},
+	{&url.URL{Scheme: "wss", Host: "[::1]"}, "[::1]:443", "::1"},
+	{&url.URL{Scheme: "ws", Host: "[::1]:8080"}, "[::1]:8080", "::1"},
+	{&url.URL{Scheme: "wss", Host: "[::1]:8080"}, "[::1]:8080", "::1"},
+	{&url.URL{Scheme: "ws", Host: "::1"}, "[::1]:80", "::1"},
+	{&url.URL{Scheme: "wss", Host: "::1"}, "[::1]:443", "::1"},
+	{&url.URL{Scheme: "ws", Host: "2001:67c:ae8:3::3b"}, "[2001:67c:ae8:3::3b]:80", "2001:67c:ae8:3::3b"},
+	{&url.URL{Scheme: "wss", Host: "2001:67c:ae8:3::3b"}, "[2001:67c:ae8:3::3b]:443", "2001:67c:ae8:3::3b"},
+	{&url.URL{Scheme: "ws", Host: "[2001:67c:ae8:3::3b]"}, "[2001:67c:ae8:3::3b]:80", "2001:67c:ae8:3::3b"},
+	{&url.URL{Scheme: "ws", Host: "[2001:67c:ae8:3::3b]:8080"}, "[2001:67c:ae8:3::3b]:8080", "2001:67c:ae8:3::3b"},
+	{&url.URL{Scheme: "ws", Host: "[fe80::1%eth0]"}, "[fe80::1%eth0]:80", "fe80::1%eth0"},
+	{&url.URL{Scheme: "ws", Host: "[fe80::1%eth0]:8080"}, "[fe80::1%eth0]:8080", "fe80::1%eth0"},
+	{&url.URL{Scheme: "ws", Host: "fe80::1%eth0"}, "[fe80::1%eth0]:80", "fe80::1%eth0"},
 }
 
 func TestHostPortNoPort(t *testing.T) {

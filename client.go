@@ -135,21 +135,25 @@ func (d *Dialer) Dial(urlStr string, requestHeader http.Header) (*Conn, *http.Re
 var errMalformedURL = errors.New("malformed ws or wss URL")
 
 func hostPortNoPort(u *url.URL) (hostPort, hostNoPort string) {
-	hostPort = u.Host
-	hostNoPort = u.Host
-	if i := strings.LastIndex(u.Host, ":"); i > strings.LastIndex(u.Host, "]") {
-		hostNoPort = hostNoPort[:i]
-	} else {
-		switch u.Scheme {
-		case "wss":
-			hostPort += ":443"
-		case "https":
-			hostPort += ":443"
-		default:
-			hostPort += ":80"
-		}
+	defPort := "80"
+	switch u.Scheme {
+	case "wss", "https":
+		defPort = "443"
 	}
-	return hostPort, hostNoPort
+
+	host, port, err := net.SplitHostPort(u.Host)
+	if err == nil {
+		if port == "" {
+			port = defPort
+		}
+		return net.JoinHostPort(host, port), host
+	}
+
+	host = u.Host
+	if strings.HasPrefix(host, "[") && strings.HasSuffix(host, "]") {
+		host = host[1 : len(host)-1]
+	}
+	return net.JoinHostPort(host, defPort), host
 }
 
 // DefaultDialer is a dialer with all fields set to the default values.

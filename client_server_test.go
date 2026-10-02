@@ -699,6 +699,20 @@ func TestHost(t *testing.T) {
 			wantAddr:   "example.com:443",
 			wantHeader: "badhost.com",
 		},
+		{
+			server:     server,
+			url:        "[::1]",
+			header:     "badhost.com",
+			wantAddr:   "[::1]:80",
+			wantHeader: "badhost.com",
+		},
+		{
+			server:     tlsServer,
+			url:        "[::1]",
+			header:     "badhost.com",
+			wantAddr:   "[::1]:443",
+			wantHeader: "badhost.com",
+		},
 
 		{
 			server:     server,
