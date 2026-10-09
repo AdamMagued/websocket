@@ -188,7 +188,15 @@ var maskRand = rand.Reader
 // newMaskKey returns a new 32 bit value for masking client frames.
 func newMaskKey() [4]byte {
 	var k [4]byte
-	_, _ = io.ReadFull(maskRand, k[:])
+	reader := maskRand
+	if reader == nil {
+		reader = rand.Reader
+	}
+	if _, err := io.ReadFull(reader, k[:]); err != nil {
+		if _, err := io.ReadFull(rand.Reader, k[:]); err != nil {
+			panic("websocket: failed to generate mask key: " + err.Error())
+		}
+	}
 	return k
 }
 
